@@ -1,0 +1,566 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>180 Project 1</title>
+    <style>
+        /* Reset some default styles for better consistency */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    
+        h2 {
+            text-align: center;
+            font-size: 30px;
+            margin-bottom: 24px;
+            color: #4A90E2;
+        }
+    
+        h3 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #4A90E2;
+        }
+
+        ol {
+            color: #555
+        }
+    
+        /* General styles */
+        body {
+            font-family: "Roboto", sans-serif;
+            background-color: #EDEDED; /* Light gray background */
+            color: #eee;
+        }
+    
+        /* Header styles */
+        header {
+            text-align: center;
+            background-color: #8A90E2; /* purple header background */
+            color: #fff;
+            padding: 24px 0;
+            position: relative;
+        }
+    
+        header h1 {
+            font-size: 42px;
+            margin-bottom: 16px;
+            padding: 16px; /* Add padding to center and space h1 */
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+    
+        header p {
+            font-size: 20px;
+            margin-top: 16px;
+        }
+    
+        /* Navigation styles (customize as needed) */
+        nav {
+            text-align: center;
+            background-color: #eee;
+            color: #fff;
+            padding: 12px 0;
+        }
+    
+        /* Main content styles */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+    
+        /* Text Overview Section styles */
+        .text-overview {
+            text-align: center;
+            padding: 24px;
+            background-color: #F9F9F9; /* Light gray text background */
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            margin-bottom: 20px; /* Add margin to create separation */
+        }
+    
+        .text-overview h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #4A90E2;
+        }
+    
+        .text-overview p {
+            font-size: 20px;
+            margin: 16px 0;
+            color: #666;
+            text-align: left;
+        }
+    
+        /* Image section styles */
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+
+        }
+    
+        .image-item {
+            width: calc(25% - 20px);
+            margin-right: 20px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            background-color: #F9F9F9; /* Light gray image background */
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .image-item2 {
+            width: calc(33% - 20px);
+            margin-right: 20px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            background-color: #F9F9F9; /* Light gray image background */
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            transition: transform 0.3s ease-in-out;
+        }
+    
+        .image-item:hover {
+            transform: scale(1.05);
+        }
+    
+        .image-item img {
+            max-width: 100%;
+            height: auto;
+        }
+    
+        .image-item p {
+            text-align: center;
+            font-size: 18px;
+            margin: 16px 0;
+            color: #555;
+        }
+    
+        /* Footer styles */
+        footer {
+            text-align: center;
+            padding: 24px;
+            background-color: #eee;
+            color: #aaa;
+        }
+    
+        .footer p {
+            font-size: 16px;
+        }
+        .text-box {
+            text-align: center;
+            font-size: 20px;
+            margin: 16px 0;
+            color: #666;
+        }
+    </style>
+    
+</head>
+<body>
+    <header>
+        <h1>
+            Russian Empire Images: <br>
+            Colorizing the Prokudin-Gorskii photo collection
+        </h1>
+    </header>
+    
+    <main>
+
+        <section class="text-overview">
+            <h2>Overview</h2>
+            <p>This project aimed to automatically produce color images from Sergei Mikhailovich Prokudin-Gorskii's digitized glass plate negatives. These negatives contain three separate exposures taken through red, green, and blue filters, capturing the Russian Empire in the early 20th century. Our goal was to align these exposures and combine them into a single color image with minimal visual artifacts.
+            </p>
+
+            <h2> Approach </h2>
+            <h3> Small images: Exhaustive search </h3>
+            <p>For small images, I implemented an exhaustive search algorithm using the euclidean distance (L2 norm) as the error metric. This approach involved shifting the green and red channels over a range of possible offsets relative to the blue channel, which remained fixed. For each offset, the L2 distance between the overlapping regions was calculated. The offset that yielded the minimum error was selected as the best alignment.</p>
+
+            <p>While effective for small images, this method had limitations. The computational cost increased significantly with larger search ranges, making it impractical for bigger images or when a wider range of potential offsets needed to be considered. Despite these constraints, the exhaustive search proved to be robust and accurate for aligning the color channels in smaller images from the Prokudin-Gorskii collection, producing visually pleasing results with minimal artifacts.</p>
+            </p>
+            <h3> Large images: Gaussian Pyramids with edge detection</h3>
+            <p>For the larger images, I utilised a Gaussian pyramid approach in conjunction with edge detection.
+                <br>
+                <br>
+                I created a Gaussian pyramid by recursively applying a Gaussian filter to the image and downsampling it. We then calculate the best shift at the top level of the pyramid, and use this as a base for the next layer. By repeating this at every layer until we get to our original image we do not have to calculate as big of a window at any single level.</p>
+
+            <h2> Takeaways </h2>
+                <p>I think my techniques worked quite well. The only image that I think could be aligned better is the "lady" image. Which I believe is because of its blurry edges. I would like to improve the white balance because as you can see in the full list of examples, some images it improves, some it makes unnaturally dark.</p>
+            <h2> Bells and Whistles </h2>
+            <h3>Edge Detection</h3>
+            <P>To improve alignment accuracy on bigger images I applied a sobel kernel to the image to get isolate the edges in the x and y direction. This improves the accuracy of the alignment as the edges, rather than all the pixels in the image.
+            </p>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/guy_pre_edge.png" alt="original guy image">
+                    <p>Original Image</p>
+                    <p>Shift: Green: (41, 9), Red: (35, -291)</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/emir_edges.png" alt="Church after Sobel kernel convolution">
+                    <p>Image after Sobel kernel convolution</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/emir_pre_hist.jpg" alt="Gaussian Pyramid without edge detection">
+                    <p>Final image Gaussian Pyramid with edge detection</p>
+                    <p>Shift: Green: (49, 23), Red: (107, 40)</p>
+                </div>
+            </div>
+            <h3> Localized Histogram Equalisation </h3>
+            <p>Process: I got the histogram for each of the 3 channels of the image, and then applied histogram equalization by mapping the cumulative distribution function (CDF) of the histogram to the pixel values. This was done for each of the 3 channels.</p>
+            <br>
+            <p>I then performed this technique in localized regions across the image to avoid darkening or lightening the image too much overall.</p>
+            <p>As you can see the added contrast makes detail in the image more visible, in the global histogram equalisation, and even more so with the localized histogram equalisation. You can also see that the global histogram equalisation makes the image look unnatural.</p>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/self_portrait_pre_hist.jpg" alt="original church image">
+                    <p>Before Histogram Equalisation</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/self_portrait_basic_hist.png" alt="Church after Sobel kernel convolution">
+                    <p>Image after GLOBAL Histogram Equalisation</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/self_portrait_out.jpg" alt="Gaussian Pyramid without edge detection">
+                    <p>Image after LOCALIZED Histogram Equalisation</p>
+
+                </div>
+            </div>
+            <h3> Automatic White Balance </h3>
+            <p>Process: I first calculated the illumant using the average pixel value of the aligned image. Next, I computed scaling factors for each color channel (R, G, B) that would shift the estimated illuminant towards pure white (equal values in all channels). These scaling factors were then applied to the entire image, effectively removing the color cast. To preserve the overall brightness of the image, we normalized the scaling factors to ensure that the brightest channel remained unchanged.</p>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/church_before_white_balance.png" alt="Church after white balance">
+                    <p>Before white balance</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/church_after_white_balance.png" alt="Gaussian Pyramid without edge detection">
+                    <p>After white balance</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/church_illuminant.png" alt="Gaussian Pyramid without edge detection">
+<p>The illuminant</p>
+
+                </div>
+            </div>
+                
+<h2>Final Thoughts</h2>
+<p>Over the summer I learned how to edit photos using software like Adobe Lightroom. This project was particularly interesting to me because I got to see how a lot of their features are implemented in code.
+    <br>
+    <br>
+    <p>The next things that I would like to implement are automatic cropping (so we can avoid the chromatic aberration at the edges of the image) and color grading tools for personalizing the image.</p>
+</p>
+        </section>
+
+        <h2> Images</h2>
+        <section class="text-overview">
+            <h3>Cathedral</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/cathedral_pre_hist.jpg" alt="Cathedral Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/cathedral_out.jpg" alt="Cathedral Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (5, 2), Red: (12, 3)
+            </div>
+
+        </section>
+        
+        <section class="text-overview">
+            <h3>Church</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/church_pre_hist.jpg" alt="Church Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/church_out.jpg" alt="Church Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (25, -2), Red: (61, -14)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Emir</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/emir_pre_hist.jpg" alt="Emir Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/emir_out.jpg" alt="Emir Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (49, 23), Red: (107, 40)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Harvesters</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/harvesters_pre_hist.jpg" alt="Harvesters Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/harvesters_out.jpg" alt="Harvesters Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (60, 17), Red: (129, 3)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Icon</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/icon_pre_hist.jpg" alt="Icon Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/icon_out.jpg" alt="Icon Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (40, 16), Red: (90, 23)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Lady</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/lady_pre_hist.jpg" alt="Lady Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/lady_out.jpg" alt="Lady Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (58, -10), Red: (125, -21)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Melons</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/melons_pre_hist.jpg" alt="Melons Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/melons_out.jpg" alt="Melons Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (78, 5), Red: (177, 11)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Monastery</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/monastery_pre_hist.jpg" alt="Monastery Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/monastery_out.jpg" alt="Monastery Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (-3, 2), Red: (3, 2)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Onion Church</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/onion_church_pre_hist.jpg" alt="Onion Church Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/onion_church_out.jpg" alt="Onion Church Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (52, 24), Red: (107, 35)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Sculpture</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/sculpture_pre_hist.jpg" alt="Sculpture Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/sculpture_out.jpg" alt="Sculpture Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (33, -11), Red: (140, -26)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Self Portrait</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/self_portrait_pre_hist.jpg" alt="Self Portrait Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/self_portrait_out.jpg" alt="Self Portrait Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (78, 29), Red: (176, 37)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Three Generations</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/three_generations_pre_hist.jpg" alt="Three Generations Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/three_generations_out.jpg" alt="Three Generations Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (54, 0), Red: (111, 7)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Tobolsk</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/tobolsk_pre_hist.jpg" alt="Tobolsk Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/tobolsk_out.jpg" alt="Tobolsk Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (3, 3), Red: (6, 3)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Train</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/train_pre_hist.jpg" alt="Train Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/train_out.jpg" alt="Train Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (41, 1), Red: (85, 29)
+            </div>
+        </section>
+        
+        <h2>Other Images</h2>
+        <section class="text-overview">
+            <h3>Plants</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/plants_pre_hist.jpg" alt="Plants Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/plants_out.jpg" alt="Plants Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (42, -38), Red: (108, -82)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Flower Bush</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/flower_bush_pre_hist.jpg" alt="Flower Bush Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/flower_bush_out.jpg" alt="Flower Bush Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (48, -8), Red: (96, -24)
+            </div>
+        </section>
+        
+        <section class="text-overview">
+            <h3>Garden</h3>
+            <div class="image-container">
+                <div class="image-item">
+                    <img src="../../outputs/garden_pre_hist.jpg" alt="Garden Pre-Histogram">
+                    <p>Edge Gaussian Pyramid Aligned image</p>
+                </div>
+                <div class="image-item">
+                    <img src="../../outputs/garden_out.jpg" alt="Garden Output"> 
+                    <p>Now with histogram equalisation and white balance</p>
+                </div>
+            </div>
+            <div class="text-box">
+                Shift: Green: (59, 27), Red: (126, 34)
+            </div>
+        </section>
+
+        
+        
+
+
+
+
+
+
+    </main>
+    
+</body>
+</html>
